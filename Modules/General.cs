@@ -3,8 +3,6 @@ using Discord.Addons.CommandsExtension;
 using Discord.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ReadyCheckBot.Modules
@@ -16,7 +14,7 @@ namespace ReadyCheckBot.Modules
         private readonly IConfiguration _config;
 
         public General(ILogger<General> logger, CommandService service, IConfiguration config)
-        { 
+        {
             _logger = logger;
             _service = service;
             _config = config;
@@ -40,6 +38,7 @@ namespace ReadyCheckBot.Modules
                 .Build();
 
             await ReplyAsync(null, false, helpEmbed);
+            _logger.LogInformation($"{Context.User.Username} executed the help command!");
         }
     }
 }

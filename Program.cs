@@ -16,43 +16,43 @@ namespace ReadyCheckBot
     {
         static async Task Main(string[] args)
         {
-                var builder = Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(x =>
-                {
-                    var configuration = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("appsettings.json", false, true)
-                        .Build();
+            var builder = Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration(x =>
+            {
+                var configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", false, true)
+                    .Build();
 
-                    x.AddConfiguration(configuration);
-                })
-                .ConfigureLogging(x =>
+                x.AddConfiguration(configuration);
+            })
+            .ConfigureLogging(x =>
+            {
+                x.AddConsole();
+                x.SetMinimumLevel(LogLevel.Information);
+            })
+            .ConfigureDiscordHost<DiscordSocketClient>((context, config) =>
+            {
+                config.SocketConfig = new DiscordSocketConfig
                 {
-                    x.AddConsole();
-                    x.SetMinimumLevel(LogLevel.Information);
-                })
-                .ConfigureDiscordHost<DiscordSocketClient>((context, config) =>
-                {
-                    config.SocketConfig = new DiscordSocketConfig
-                    {
-                        LogLevel = LogSeverity.Info,
-                        AlwaysDownloadUsers = true,
-                        MessageCacheSize = 200,
-                    };
+                    LogLevel = LogSeverity.Info,
+                    AlwaysDownloadUsers = true,
+                    MessageCacheSize = 200,
+                };
 
-                    config.Token = context.Configuration["token"];
-                })
-                .UseCommandService((context, config) =>
-                {
-                    config.CaseSensitiveCommands = false;
-                    config.LogLevel = LogSeverity.Info;
-                    config.DefaultRunMode = RunMode.Async;
-                })
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddHostedService<CommandHandler>();
-                })
-                .UseConsoleLifetime();
+                config.Token = context.Configuration["token"];
+            })
+            .UseCommandService((context, config) =>
+            {
+                config.CaseSensitiveCommands = false;
+                config.LogLevel = LogSeverity.Info;
+                config.DefaultRunMode = RunMode.Async;
+            })
+            .ConfigureServices((context, services) =>
+            {
+                services.AddHostedService<CommandHandler>();
+            })
+            .UseConsoleLifetime();
 
             var host = builder.Build();
             using (host)

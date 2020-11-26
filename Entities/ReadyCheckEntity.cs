@@ -1,12 +1,14 @@
 ﻿using Discord;
 using Discord.Commands;
+using System.Collections.Generic;
 
 namespace ReadyCheckBot.Entities
 {
     public class ReadyCheckEntity
     {
         public IUser[] readyUsers { get; set; }
-        private int amount;
+        public int amount { get; set; }
+        private readonly EmbedBuilder embedBuilder;
 
         private SocketCommandContext _ctx;
 
@@ -14,21 +16,27 @@ namespace ReadyCheckBot.Entities
         {
             this._ctx = ctx;
             this.amount = amount;
-            readyUsers = new IUser[0];
+            this.readyUsers = new IUser[0];
+            embedBuilder = new EmbedBuilder();
         }
 
         public Embed GenerateEmbed()
         {
 
-            var builder = new EmbedBuilder()
+            embedBuilder
                 .WithAuthor(new EmbedAuthorBuilder()
                     .WithIconUrl(_ctx.Client.CurrentUser.GetAvatarUrl() ??
                                  _ctx.Client.CurrentUser.GetDefaultAvatarUrl()).WithName("ReadyCheck"))
-                .WithDescription($"Waiting for {amount - readyUsers.Length} people.")
-                .WithColor(new Color(30, 191, 29))
+                .WithDescription($"Waiting for {amount} people.")
+                .WithColor(new Color(255, 204, 0))
                 .WithFooter(new EmbedFooterBuilder().WithText($"Started by: {_ctx.User.Username}"))
                 .WithCurrentTimestamp();
 
+            return embedBuilder.Build();
+        }
+
+        public Embed UpdateEmbed()
+        {
             if (readyUsers.Length > 0)
             {
                 var readyUsernames = "";
@@ -36,12 +44,25 @@ namespace ReadyCheckBot.Entities
                     readyUsernames += $"{user.Username}\n";
 
                 readyUsernames.Remove(readyUsernames.Length - 1);
-                builder.AddField("Ready", readyUsernames, true);
+                embedBuilder.Fields = new List<EmbedFieldBuilder> { new EmbedFieldBuilder().WithName("Ready").WithValue(readyUsernames).WithIsInline(false) };
+            }
+            else
+            {
+                embedBuilder.Fields = new List<EmbedFieldBuilder>();
             }
 
-            if (readyUsers.Length == amount) builder.Description = "Everyone is ready!";
+            if (readyUsers.Length >= amount)
+            {
+                embedBuilder.Description = "Everyone is ready!";
+                embedBuilder.Color = new Color(32, 192, 29);
+            }
+            else
+            {
+                embedBuilder.Description = $"Waiting for { amount - readyUsers.Length} people.";
+                embedBuilder.Color = new Color(255, 204, 0);
+            }
 
-            return builder.Build();
+            return embedBuilder.Build();
         }
     }
 }
