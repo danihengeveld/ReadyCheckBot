@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq;
-using Discord;
+﻿using Discord;
 using Discord.Addons.Hosting;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using ReadyCheck.Entities;
 using ReadyCheck.Modules;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ReadyCheck.Services
 {
@@ -69,7 +69,7 @@ namespace ReadyCheck.Services
                 var message = await cache.GetOrDownloadAsync();
                 var reactedUsersCollection = await message.GetReactionUsersAsync(ReadyCheckCommand.emoji, 30).FlattenAsync();
                 var reactedUsers = reactedUsersCollection.Where((user) => user.Id != _client.CurrentUser.Id).ToArray();
-                Embed embed = (Embed) message.Embeds.First();
+                Embed embed = (Embed)message.Embeds.First();
 
                 rcEntity.readyUsers = reactedUsers;
 

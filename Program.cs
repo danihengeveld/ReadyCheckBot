@@ -1,9 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Addons.Hosting;
-using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ReadyCheck.Services;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ReadyCheck
 {
@@ -55,7 +53,7 @@ namespace ReadyCheck
                     services.AddHostedService<CommandHandler>();
                 })
                 .UseConsoleLifetime();
-            
+
             var host = builder.Build();
             using (host)
             {

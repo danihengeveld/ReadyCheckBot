@@ -1,11 +1,9 @@
 ﻿using Discord;
-using Discord.Addons.Interactive;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
 using ReadyCheck.Entities;
-using System.Threading.Tasks;
-using System.Linq;
 using ReadyCheck.Services;
+using System.Threading.Tasks;
 
 namespace ReadyCheck.Modules
 {
@@ -16,7 +14,7 @@ namespace ReadyCheck.Modules
         public ReadyCheckCommand(ILogger<ReadyCheckCommand> logger)
             => _logger = logger;
 
-        public static IEmote emoji =  new Emoji("👍");
+        public static IEmote emoji = new Emoji("👍");
 
         [Command("rcheck")]
         [Summary("Starts the ready check.")]
@@ -25,7 +23,7 @@ namespace ReadyCheck.Modules
             var rcEntity = new ReadyCheckEntity(Context, amount);
 
             var message = await ReplyAsync(null, false, rcEntity.GenerateEmbed());
-            
+
             await message.AddReactionAsync(emoji);
 
             CommandHandler.messageIds.Add(message.Id);
