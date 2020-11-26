@@ -29,6 +29,7 @@ namespace ReadyCheckBot.Services
         {
             _client.MessageReceived += OnMessageReceived;
             _service.CommandExecuted += OnCommandExecuted;
+            await _client.SetGameAsync("?rc | git.io/JkHdC", null, ActivityType.Listening);
             await _service.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
         }
 
