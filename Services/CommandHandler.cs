@@ -3,8 +3,8 @@ using Discord.Addons.Hosting;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
-using ReadyCheck.Entities;
-using ReadyCheck.Modules;
+using ReadyCheckBot.Entities;
+using ReadyCheckBot.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ReadyCheck.Services
+namespace ReadyCheckBot.Services
 {
     public class CommandHandler : InitializedService
     {
@@ -58,7 +58,7 @@ namespace ReadyCheck.Services
 
         private async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
-            if (command.IsSpecified && !result.IsSuccess) await context.Channel.SendMessageAsync($"Error: {result}");
+            if (command.IsSpecified && !result.IsSuccess) await context.Channel.SendMessageAsync($"Error: {result.ErrorReason}");
         }
 
         private async Task OnReactionAdded(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
@@ -67,9 +67,9 @@ namespace ReadyCheck.Services
             if (messageIds.Contains(reaction.MessageId))
             {
                 var message = await cache.GetOrDownloadAsync();
-                var reactedUsersCollection = await message.GetReactionUsersAsync(ReadyCheckCommand.emoji, 30).FlattenAsync();
+                var reactedUsersCollection = await message.GetReactionUsersAsync(ReadyCheck.emoji, 30).FlattenAsync();
                 var reactedUsers = reactedUsersCollection.Where((user) => user.Id != _client.CurrentUser.Id).ToArray();
-                Embed embed = (Embed)message.Embeds.First();
+                Embed embed = (Embed) message.Embeds.First();
 
                 rcEntity.readyUsers = reactedUsers;
 
@@ -83,7 +83,7 @@ namespace ReadyCheck.Services
             if (messageIds.Contains(reaction.MessageId))
             {
                 var message = await cache.GetOrDownloadAsync();
-                var reactedUsersCollection = await message.GetReactionUsersAsync(ReadyCheckCommand.emoji, 30).FlattenAsync();
+                var reactedUsersCollection = await message.GetReactionUsersAsync(ReadyCheck.emoji, 30).FlattenAsync();
                 var reactedUsers = reactedUsersCollection.Where((user) => user.Id != _client.CurrentUser.Id).ToArray();
                 Embed embed = (Embed)message.Embeds.First();
 

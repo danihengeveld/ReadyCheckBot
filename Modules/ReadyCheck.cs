@@ -1,24 +1,24 @@
 ﻿using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
-using ReadyCheck.Entities;
-using ReadyCheck.Services;
+using ReadyCheckBot.Entities;
+using ReadyCheckBot.Services;
 using System.Threading.Tasks;
 
-namespace ReadyCheck.Modules
+namespace ReadyCheckBot.Modules
 {
-    public class ReadyCheckCommand : ModuleBase<SocketCommandContext>
+    public class ReadyCheck : ModuleBase<SocketCommandContext>
     {
-        private readonly ILogger<ReadyCheckCommand> _logger;
+        private readonly ILogger<ReadyCheck> _logger;
 
-        public ReadyCheckCommand(ILogger<ReadyCheckCommand> logger)
+        public ReadyCheck(ILogger<ReadyCheck> logger)
             => _logger = logger;
 
-        public static IEmote emoji = new Emoji("👍");
+        public static IEmote emoji = new Emoji("✅");
 
-        [Command("rcheck")]
+        [Command("readycheck"), Alias("rcheck", "rc", "check", "checkready")]
         [Summary("Starts the ready check.")]
-        public async Task RCheck(int amount)
+        public async Task RCheck([Summary("The amount of players to check for.")] int amount = 10)
         {
             var rcEntity = new ReadyCheckEntity(Context, amount);
 

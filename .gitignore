@@ -4,6 +4,7 @@ project.lock.json
 .DS_Store
 *.pyc
 nupkg/
+*.pubxml
 
 # Visual Studio Code
 .vscode
@@ -16,6 +17,7 @@ nupkg/
 *.user
 *.userosscache
 *.sln.docstates
+appsettings.Development.json
 
 # Build results
 [Dd]ebug/

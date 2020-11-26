@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 
-namespace ReadyCheck.Entities
+namespace ReadyCheckBot.Entities
 {
     public class ReadyCheckEntity
     {
