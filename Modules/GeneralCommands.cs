@@ -1,21 +1,27 @@
 ﻿using Discord;
 using Discord.Commands;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace ReadyCheck.Modules
 {
-    public class General : ModuleBase
+    public class GeneralCommands : ModuleBase<SocketCommandContext>
     {
+        private readonly ILogger<GeneralCommands> _logger;
+
+        public GeneralCommands(ILogger<GeneralCommands> logger)
+            => _logger = logger;
+
         [Command("ping")]
+        [Summary("Sends Pong! in chat if the bot is online!")]
         public async Task Ping()
         {
-            await Context.Channel.SendMessageAsync("Pong!");
+            await ReplyAsync("Pong!");
+            _logger.LogInformation($"{Context.User.Username} executed the ping command!");
         }
 
         [Command("info")]
+        [Summary("Sends a menu in chat with information about the bot and all commands.")]
         public async Task Info()
         {
             var commandsField = new EmbedFieldBuilder()
@@ -42,7 +48,7 @@ namespace ReadyCheck.Modules
                 .WithCurrentTimestamp();
             var embed = builder.Build();
 
-            await Context.Channel.SendMessageAsync(null, false, embed);
+            await ReplyAsync(null, false, embed);
         }
     }
 }
