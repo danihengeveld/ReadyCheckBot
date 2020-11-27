@@ -55,6 +55,7 @@ namespace ReadyCheckBot.Modules
         public async Task UpdateReadyCheck(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.User.Value.IsBot) return;
+            if (emoji.Name != reaction.Emote.Name) return;
             if (latestMessages.ContainsKey(channel.Id))
             {
                 IUserMessage message = latestMessages[channel.Id];
