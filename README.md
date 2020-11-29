@@ -25,4 +25,5 @@ ReadyCheck for 1 where 1 has marked himself as ready. This readycheck is complet
 
 ## Credits
 [Discord.Net](https://github.com/discord-net/Discord.Net)
+
 [CommandsExtension](https://github.com/Charly6596/Discord.Addons.CommandsExtension)
