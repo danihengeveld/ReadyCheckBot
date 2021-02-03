@@ -21,7 +21,8 @@ namespace ReadyCheckBot
             {
                 var configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", false, true)
+                    .AddJsonFile("appsettings.json", false, false)
+                    .AddJsonFile("appsettings.Development.json", true, false)
                     .Build();
 
                 x.AddConfiguration(configuration);
