@@ -1,4 +1,6 @@
 # ReadyCheckBot
+[![CodeQL](https://github.com/danihengeveld/ReadyCheckBot/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/danihengeveld/ReadyCheckBot/actions/workflows/codeql-analysis.yml)
+
 Discord Bot to check if people are ready.
 
 ## Description
