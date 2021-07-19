@@ -1,68 +1,67 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ReadyCheckBot.Entities
 {
     public class ReadyCheckEntity
     {
-        public IUser[] readyUsers { get; set; }
-        public int amount { get; set; }
-        private readonly EmbedBuilder embedBuilder;
+        public IUser[] ReadyUsers { get; set; }
+        private int Amount { get; }
+        private readonly EmbedBuilder _embedBuilder;
 
-        private SocketCommandContext _ctx;
+        private readonly SocketCommandContext _ctx;
 
         public ReadyCheckEntity(SocketCommandContext ctx, int amount)
         {
-            this._ctx = ctx;
-            this.amount = amount;
-            this.readyUsers = new IUser[0];
-            embedBuilder = new EmbedBuilder();
+            _ctx = ctx;
+            Amount = amount;
+            ReadyUsers = new IUser[0];
+            _embedBuilder = new EmbedBuilder();
         }
 
         public Embed GenerateEmbed()
         {
 
-            embedBuilder
+            _embedBuilder
                 .WithAuthor(new EmbedAuthorBuilder()
                     .WithIconUrl(_ctx.Client.CurrentUser.GetAvatarUrl() ??
                                  _ctx.Client.CurrentUser.GetDefaultAvatarUrl()).WithName("ReadyCheck"))
-                .WithDescription($"Waiting for {amount} people.")
+                .WithDescription($"Waiting for {Amount} people.")
                 .WithColor(new Color(255, 204, 0))
                 .WithFooter(new EmbedFooterBuilder().WithText($"Started by: {_ctx.User.Username}"))
                 .WithCurrentTimestamp();
 
-            return embedBuilder.Build();
+            return _embedBuilder.Build();
         }
 
         public Embed UpdateEmbed()
         {
-            if (readyUsers.Length > 0)
+            if (ReadyUsers.Length > 0)
             {
-                var readyUsernames = "";
-                foreach (IUser user in readyUsers)
-                    readyUsernames += $"{user.Username}\n";
+                var readyUsernames = ReadyUsers.Aggregate(string.Empty, (current, user) => current + $"{user.Username}\n");
 
                 readyUsernames.Remove(readyUsernames.Length - 1);
-                embedBuilder.Fields = new List<EmbedFieldBuilder> { new EmbedFieldBuilder().WithName("Ready").WithValue(readyUsernames).WithIsInline(false) };
+                _embedBuilder.Fields = new List<EmbedFieldBuilder> { new EmbedFieldBuilder().WithName("Ready").WithValue(readyUsernames).WithIsInline(false) };
             }
             else
             {
-                embedBuilder.Fields = new List<EmbedFieldBuilder>();
+                _embedBuilder.Fields = new List<EmbedFieldBuilder>();
             }
 
-            if (readyUsers.Length >= amount)
+            if (ReadyUsers.Length >= Amount)
             {
-                embedBuilder.Description = "Everyone is ready!";
-                embedBuilder.Color = new Color(32, 192, 29);
+                _embedBuilder.Description = "Everyone is ready!";
+                _embedBuilder.Color = new Color(32, 192, 29);
             }
             else
             {
-                embedBuilder.Description = $"Waiting for { amount - readyUsers.Length} people.";
-                embedBuilder.Color = new Color(255, 204, 0);
+                _embedBuilder.Description = $"Waiting for { Amount - ReadyUsers.Length} people.";
+                _embedBuilder.Color = new Color(255, 204, 0);
             }
 
-            return embedBuilder.Build();
+            return _embedBuilder.Build();
         }
     }
 }
