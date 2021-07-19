@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace ReadyCheckBot
 {
-    class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var builder = Host.CreateDefaultBuilder(args)
+            var hostBuilder = Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(x =>
             {
                 var configuration = new ConfigurationBuilder()
@@ -32,7 +32,7 @@ namespace ReadyCheckBot
                 x.AddConsole();
                 x.SetMinimumLevel(LogLevel.Information);
             })
-            .ConfigureDiscordHost<DiscordSocketClient>((context, config) =>
+            .ConfigureDiscordHost((context, config) =>
             {
                 config.SocketConfig = new DiscordSocketConfig
                 {
@@ -55,11 +55,7 @@ namespace ReadyCheckBot
             })
             .UseConsoleLifetime();
 
-            var host = builder.Build();
-            using (host)
-            {
-                await host.RunAsync();
-            }
+            await hostBuilder.RunConsoleAsync();
         }
     }
 }

@@ -14,10 +14,10 @@ namespace ReadyCheckBot.Modules
         private readonly ILogger<ReadyCheck> _logger;
         private readonly DiscordSocketClient _client;
 
-        private static IEmote emoji = new Emoji("✅");
+        private static readonly IEmote Emoji = new Emoji("✅");
 
-        private static readonly IDictionary<ulong, IUserMessage> latestMessages = new Dictionary<ulong, IUserMessage>();
-        private static readonly IDictionary<ulong, ReadyCheckEntity> latestRCEntities = new Dictionary<ulong, ReadyCheckEntity>();
+        private static readonly IDictionary<ulong, IUserMessage> LatestMessages = new Dictionary<ulong, IUserMessage>();
+        private static readonly IDictionary<ulong, ReadyCheckEntity> LatestRcEntities = new Dictionary<ulong, ReadyCheckEntity>();
 
         public ReadyCheck(ILogger<ReadyCheck> logger, DiscordSocketClient client)
         {
@@ -32,49 +32,49 @@ namespace ReadyCheckBot.Modules
         [Summary("Starts the ready check.")]
         public async Task RCheck([Summary("The amount of players to check for.")] int amount = 10)
         {
-            IUserMessage latestMessage = null;
-            if (latestMessages.TryGetValue(Context.Channel.Id, out latestMessage))
+            _ = Task.Run(async () => await Context.Message.DeleteAsync());
+
+            if (LatestMessages.TryGetValue(Context.Channel.Id, out var latestMessage))
             {
-                await Context.Channel.DeleteMessageAsync(latestMessage);
-                latestMessages.Remove(Context.Channel.Id);
-                latestRCEntities.Remove(Context.Channel.Id);
+                _ = Task.Run(async () => await Context.Channel.DeleteMessageAsync(latestMessage));
+                LatestMessages.Remove(Context.Channel.Id);
+                LatestRcEntities.Remove(Context.Channel.Id);
             }
 
-            ReadyCheckEntity rcEntity = new ReadyCheckEntity(Context, amount);
+            var rcEntity = new ReadyCheckEntity(Context, amount);
 
             var message = await ReplyAsync(null, false, rcEntity.GenerateEmbed());
 
-            await message.AddReactionAsync(emoji);
+            _ = Task.Run(async () => await message.AddReactionAsync(Emoji));
 
-            latestRCEntities.Add(Context.Channel.Id, rcEntity);
-            latestMessages.Add(Context.Channel.Id, message);
+            LatestRcEntities.Add(Context.Channel.Id, rcEntity);
+            LatestMessages.Add(Context.Channel.Id, message);
 
             _logger.LogInformation($"{Context.User.Username} started a ready check for {amount} people!");
         }
 
-        public async Task UpdateReadyCheck(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
+        private async Task UpdateReadyCheck(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.User.Value.IsBot) return;
-            if (emoji.Name != reaction.Emote.Name) return;
-            if (latestMessages.ContainsKey(channel.Id))
+            if (Emoji.Name != reaction.Emote.Name) return;
+            if (LatestMessages.ContainsKey(channel.Id))
             {
-                IUserMessage message = latestMessages[channel.Id];
-                var reactedUsersCollection = await message.GetReactionUsersAsync(ReadyCheck.emoji, 30).FlattenAsync();
-                IUser[] reactedUsers = reactedUsersCollection.Where((user) => user.Id != _client.CurrentUser.Id).ToArray();
-                ReadyCheckEntity rcEntity = latestRCEntities[channel.Id];
-                rcEntity.readyUsers = reactedUsers;
+                var message = LatestMessages[channel.Id];
+                var reactedUsersCollection = await message.GetReactionUsersAsync(Emoji, 30).FlattenAsync();
+                var reactedUsers = reactedUsersCollection.Where((user) => user.Id != _client.CurrentUser.Id).ToArray();
+                var rcEntity = LatestRcEntities[channel.Id];
+                rcEntity.ReadyUsers = reactedUsers;
 
-                await message.ModifyAsync(msg => msg.Embed = rcEntity.UpdateEmbed());
+                _ = Task.Run(async () => await message.ModifyAsync(msg => msg.Embed = rcEntity.UpdateEmbed()));
             }
         }
 
-        public Task CleanUpReadyCheck(Cacheable<IMessage, ulong> cache, ISocketMessageChannel channel)
+        private static Task CleanUpReadyCheck(Cacheable<IMessage, ulong> cache, ISocketMessageChannel channel)
         {
-            if (latestMessages.ContainsKey(channel.Id))
-            {
-                latestMessages.Remove(channel.Id);
-                latestRCEntities.Remove(channel.Id);
-            }
+            if (!LatestMessages.ContainsKey(channel.Id)) return Task.CompletedTask;
+
+            LatestMessages.Remove(channel.Id);
+            LatestRcEntities.Remove(channel.Id);
 
             return Task.CompletedTask;
         }
