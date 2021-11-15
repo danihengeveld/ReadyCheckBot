@@ -28,7 +28,7 @@ namespace ReadyCheckBot.Modules
             _logger.LogInformation($"{Context.User.Username} executed the ping command!");
         }
 
-        [Command("help"), Alias("assits", "info"), Summary("Shows help menu.")]
+        [Command("help"), Alias("assist", "info"), Summary("Shows help menu.")]
         public async Task Help([Remainder] string command = null)
         {
             var botPrefix = _config["prefix"];

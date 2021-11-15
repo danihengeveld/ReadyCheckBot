@@ -32,11 +32,11 @@ namespace ReadyCheckBot.Modules
         [Summary("Starts the ready check.")]
         public async Task RCheck([Summary("The amount of players to check for.")] int amount = 10)
         {
-            _ = Task.Run(async () => await Context.Message.DeleteAsync());
+            await Context.Message.DeleteAsync();
 
             if (LatestMessages.TryGetValue(Context.Channel.Id, out var latestMessage))
             {
-                _ = Task.Run(async () => await Context.Channel.DeleteMessageAsync(latestMessage));
+                await Context.Channel.DeleteMessageAsync(latestMessage);
                 LatestMessages.Remove(Context.Channel.Id);
                 LatestRcEntities.Remove(Context.Channel.Id);
             }
@@ -45,7 +45,7 @@ namespace ReadyCheckBot.Modules
 
             var message = await ReplyAsync(null, false, rcEntity.GenerateEmbed());
 
-            _ = Task.Run(async () => await message.AddReactionAsync(Emoji));
+            await message.AddReactionAsync(Emoji);
 
             LatestRcEntities.Add(Context.Channel.Id, rcEntity);
             LatestMessages.Add(Context.Channel.Id, message);
@@ -65,7 +65,7 @@ namespace ReadyCheckBot.Modules
                 var rcEntity = LatestRcEntities[channel.Id];
                 rcEntity.ReadyUsers = reactedUsers;
 
-                _ = Task.Run(async () => await message.ModifyAsync(msg => msg.Embed = rcEntity.UpdateEmbed()));
+                await message.ModifyAsync(msg => msg.Embed = rcEntity.UpdateEmbed());
             }
         }
 

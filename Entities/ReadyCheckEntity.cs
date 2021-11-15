@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +18,7 @@ namespace ReadyCheckBot.Entities
         {
             _ctx = ctx;
             Amount = amount;
-            ReadyUsers = new IUser[0];
+            ReadyUsers = Array.Empty<IUser>();
             _embedBuilder = new EmbedBuilder();
         }
 
@@ -42,7 +43,7 @@ namespace ReadyCheckBot.Entities
             {
                 var readyUsernames = ReadyUsers.Aggregate(string.Empty, (current, user) => current + $"{user.Username}\n");
 
-                readyUsernames.Remove(readyUsernames.Length - 1);
+                _ = readyUsernames.Remove(readyUsernames.Length - 1);
                 _embedBuilder.Fields = new List<EmbedFieldBuilder> { new EmbedFieldBuilder().WithName("Ready").WithValue(readyUsernames).WithIsInline(false) };
             }
             else
