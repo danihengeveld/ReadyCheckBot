@@ -1,5 +1,5 @@
 # ReadyCheckBot
-[![CodeQL](https://github.com/danihengeveld/ReadyCheckBot/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/danihengeveld/ReadyCheckBot/actions/workflows/codeql-analysis.yml)
+[![.NET](https://github.com/danihengeveld/ReadyCheckBot/actions/workflows/dotnet.yml/badge.svg)](https://github.com/danihengeveld/ReadyCheckBot/actions/workflows/dotnet.yml)
 
 Discord Bot to check if people are ready.
 
