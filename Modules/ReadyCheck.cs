@@ -53,8 +53,10 @@ namespace ReadyCheckBot.Modules
             _logger.LogInformation($"{Context.User.Username} started a ready check for {amount} people!");
         }
 
-        private async Task UpdateReadyCheck(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
+        private async Task UpdateReadyCheck(Cacheable<IUserMessage, ulong> messageCache, Cacheable<IMessageChannel, ulong> channelCache, SocketReaction reaction)
         {
+            var channel = await channelCache.GetOrDownloadAsync();
+            
             if (reaction.User.Value.IsBot) return;
             if (Emoji.Name != reaction.Emote.Name) return;
             if (LatestMessages.ContainsKey(channel.Id))
@@ -69,14 +71,14 @@ namespace ReadyCheckBot.Modules
             }
         }
 
-        private static Task CleanUpReadyCheck(Cacheable<IMessage, ulong> cache, ISocketMessageChannel channel)
+        private static async Task CleanUpReadyCheck(Cacheable<IMessage, ulong> messageCache, Cacheable<IMessageChannel, ulong> channelCache)
         {
-            if (!LatestMessages.ContainsKey(channel.Id)) return Task.CompletedTask;
+            var channel = await channelCache.GetOrDownloadAsync();
+            
+            if (!LatestMessages.ContainsKey(channel.Id)) return;
 
             LatestMessages.Remove(channel.Id);
             LatestRcEntities.Remove(channel.Id);
-
-            return Task.CompletedTask;
         }
     }
 }

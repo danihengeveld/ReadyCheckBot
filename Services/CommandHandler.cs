@@ -44,7 +44,7 @@ namespace ReadyCheckBot.Services
 
         private async Task OnMessageReceived(SocketMessage arg)
         {
-            if (!(arg is SocketUserMessage {Source: MessageSource.User} message)) return;
+            if (arg is not SocketUserMessage {Source: MessageSource.User} message) return;
 
             var argPos = 0;
             if (!(message.HasStringPrefix(_config["prefix"], ref argPos) ||
